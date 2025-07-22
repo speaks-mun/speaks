@@ -55,7 +55,7 @@ export function useApiAction<T extends any[], R>(
 
   return {
     execute,
-    isLoading,
+    pending: isLoading,
     error,
   }
 }

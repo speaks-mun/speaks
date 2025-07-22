@@ -1,12 +1,10 @@
 "use client"
-
-import type React from "react"
-
+import type { ReactNode } from "react"
 import { TopNavbar } from "./top-navbar"
 import { BottomNavbar } from "./bottom-navbar"
 
 interface MainLayoutProps {
-  children: React.ReactNode
+  children: ReactNode
   showBottomNav?: boolean
 }
 

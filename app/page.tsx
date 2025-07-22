@@ -1,7 +1,3 @@
-"use client"
-
-import { ThemeProvider } from "../src/components/theme-provider"
-
-export default function SyntheticV0PageForDeployment() {
-  return <ThemeProvider />
+export default function Page() {
+  return <h1>Welcome – placeholder landing page.</h1>
 }

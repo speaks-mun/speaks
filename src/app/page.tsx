@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default function HomePage() {
+export default function Page() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -16,10 +16,10 @@ export default function HomePage() {
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/events" className="text-body-text hover:text-heading-text transition-colors">
+            <Link href="/discover" className="text-body-text hover:text-heading-text transition-colors">
               Events
             </Link>
-            <Link href="/about" className="text-body-text hover:text-heading-text transition-colors">
+            <Link href="#about" className="text-body-text hover:text-heading-text transition-colors">
               About
             </Link>
           </nav>
@@ -49,7 +49,7 @@ export default function HomePage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-primary-cta hover:bg-primary-cta/90 text-white px-8" asChild>
-                <Link href="/events">Explore Events</Link>
+                <Link href="/discover">Explore Events</Link>
               </Button>
               <Button
                 size="lg"
@@ -64,7 +64,7 @@ export default function HomePage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-16 px-4 bg-card-background/50">
+        <section className="py-16 px-4 bg-card-background/50" id="about">
           <div className="container mx-auto">
             <h2 className="text-3xl font-bold text-heading-text text-center mb-12">Why Choose Speaks?</h2>
 
@@ -98,12 +98,88 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Call to Action Section */}
+        <section className="py-16 px-4">
+          <div className="container mx-auto text-center max-w-3xl">
+            <h2 className="text-3xl font-bold text-heading-text mb-6">Ready to Get Started?</h2>
+            <p className="text-lg text-body-text mb-8">
+              Join thousands of MUN enthusiasts already using Speaks to discover and create amazing events.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-primary-cta hover:bg-primary-cta/90 text-white px-8" asChild>
+                <Link href="/auth/signup">Sign Up Free</Link>
+              </Button>
+              <Button size="lg" variant="outline" className="border-border-divider bg-transparent" asChild>
+                <Link href="/discover">Browse Events</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
       <footer className="border-t border-border-divider bg-card-background/80 py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-body-text">© 2024 Speaks Platform. Empowering the South Indian MUN community.</p>
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="col-span-2">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-primary-cta rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">S</span>
+                </div>
+                <span className="text-xl font-bold text-heading-text">Speaks</span>
+              </div>
+              <p className="text-body-text mb-4">
+                Empowering the South Indian MUN community through seamless event discovery and creation.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-heading-text mb-3">Platform</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="/discover" className="text-body-text hover:text-heading-text">
+                    Discover Events
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/auth/signup" className="text-body-text hover:text-heading-text">
+                    Create Account
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/auth/login" className="text-body-text hover:text-heading-text">
+                    Login
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-heading-text mb-3">Support</h3>
+              <ul className="space-y-2">
+                <li>
+                  <a href="#" className="text-body-text hover:text-heading-text">
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-body-text hover:text-heading-text">
+                    Contact Us
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-body-text hover:text-heading-text">
+                    Privacy Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-border-divider mt-8 pt-8 text-center">
+            <p className="text-body-text">© 2024 Speaks Platform. Empowering the South Indian MUN community.</p>
+          </div>
         </div>
       </footer>
     </div>

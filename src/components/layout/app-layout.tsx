@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import type { ReactNode } from "react"
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { TopNavbar } from "./top-navbar"
@@ -8,7 +8,7 @@ import { BottomNavbar } from "./bottom-navbar"
 import { HamburgerMenu } from "./hamburger-menu"
 
 interface AppLayoutProps {
-  children: React.ReactNode
+  children: ReactNode
   showBottomNav?: boolean
 }
 
@@ -44,7 +44,7 @@ export function AppLayout({ children, showBottomNav = true }: AppLayoutProps) {
 
       {/* Main Content */}
       <main className={`pt-20 transition-all duration-300 ${showBottomNav ? "pb-20 md:pb-4" : "pb-4"}`}>
-        <div className="px-4 md:px-6 lg:px-8">{children}</div>
+        {children}
       </main>
 
       {/* Bottom Navigation - Mobile Only */}

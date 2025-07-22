@@ -1,21 +1,25 @@
 "use client"
 
 import { useState } from "react"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Copy, Facebook, Twitter, Linkedin, Mail, MessageCircle, QrCode } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import type { Event } from "@/lib/supabase/events"
+
+interface Event {
+  id: string
+  title: string
+  description: string
+}
 
 interface ShareEventDialogProps {
   event: Event
-  isOpen: boolean
-  onClose: () => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogProps) {
+export function ShareEventDialog({ event, open, onOpenChange }: ShareEventDialogProps) {
   const [copied, setCopied] = useState(false)
   const { toast } = useToast()
 
@@ -27,69 +31,65 @@ export function ShareEventDialog({ event, isOpen, onClose }: ShareEventDialogPro
       setCopied(true)
       toast({
         title: "Link copied!",
-        description: "Event link has been copied to your clipboard.",
+        description: "Event link has been copied to your clipboard",
       })
       setTimeout(() => setCopied(false), 2000)
     } catch (error) {
       toast({
         title: "Failed to copy",
-        description: "Please copy the link manually.",
+        description: "Please copy the link manually",
         variant: "destructive",
       })
     }
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Share Event</DialogTitle>
-          <DialogDescription>Share "{event.title}" with others</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Event URL */}
-          <div className="space-y-2">
-            <Label htmlFor="event-url">Event Link</Label>
-            <div className="flex space-x-2">
-              <Input id="event-url" value={eventUrl} readOnly className="flex-1" />
-              <Button onClick={handleCopyLink} className="bg-primary-cta hover:bg-primary-cta/90">
+          <div>
+            <h4 className="font-medium text-sm mb-2">Event Link</h4>
+            <div className="flex gap-2">
+              <Input value={eventUrl} readOnly className="flex-1" />
+              <Button onClick={handleCopyLink} variant="outline">
                 <Copy className="h-4 w-4 mr-2" />
                 {copied ? "Copied!" : "Copy"}
               </Button>
             </div>
           </div>
 
-          {/* Social Media Buttons */}
-          <div className="space-y-3">
-            <Label>Share on social media</Label>
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" disabled className="justify-start bg-transparent">
-                <Facebook className="h-4 w-4 mr-2 text-blue-600" />
-                Facebook
+          <div>
+            <h4 className="font-medium text-sm mb-3">Share on Social Media</h4>
+            <div className="grid grid-cols-3 gap-2">
+              <Button variant="outline" disabled className="flex flex-col gap-1 h-auto py-3 bg-transparent">
+                <Facebook className="h-5 w-5" />
+                <span className="text-xs">Facebook</span>
               </Button>
-              <Button variant="outline" disabled className="justify-start bg-transparent">
-                <Twitter className="h-4 w-4 mr-2 text-blue-400" />
-                Twitter
+              <Button variant="outline" disabled className="flex flex-col gap-1 h-auto py-3 bg-transparent">
+                <Twitter className="h-5 w-5" />
+                <span className="text-xs">Twitter</span>
               </Button>
-              <Button variant="outline" disabled className="justify-start bg-transparent">
-                <Linkedin className="h-4 w-4 mr-2 text-blue-700" />
-                LinkedIn
+              <Button variant="outline" disabled className="flex flex-col gap-1 h-auto py-3 bg-transparent">
+                <Linkedin className="h-5 w-5" />
+                <span className="text-xs">LinkedIn</span>
               </Button>
-              <Button variant="outline" disabled className="justify-start bg-transparent">
-                <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
-                WhatsApp
+              <Button variant="outline" disabled className="flex flex-col gap-1 h-auto py-3 bg-transparent">
+                <Mail className="h-5 w-5" />
+                <span className="text-xs">Email</span>
               </Button>
-              <Button variant="outline" disabled className="justify-start bg-transparent">
-                <Mail className="h-4 w-4 mr-2 text-gray-600" />
-                Email
+              <Button variant="outline" disabled className="flex flex-col gap-1 h-auto py-3 bg-transparent">
+                <MessageCircle className="h-5 w-5" />
+                <span className="text-xs">WhatsApp</span>
               </Button>
-              <Button variant="outline" disabled className="justify-start bg-transparent">
-                <QrCode className="h-4 w-4 mr-2 text-gray-600" />
-                QR Code
+              <Button variant="outline" disabled className="flex flex-col gap-1 h-auto py-3 bg-transparent">
+                <QrCode className="h-5 w-5" />
+                <span className="text-xs">QR Code</span>
               </Button>
             </div>
-            <p className="text-xs text-body-text">Social sharing features coming soon!</p>
           </div>
         </div>
       </DialogContent>

@@ -1,6 +1,3 @@
-import { createClient } from "@/lib/supabase/server"
-import { headers } from "next/headers"
-
 export interface AdminStats {
   pending_events: number
   total_users: number
@@ -45,129 +42,30 @@ export interface PendingEvent {
 }
 
 export async function checkAdminAccess(): Promise<boolean> {
-  const supabase = createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return false
-
-  const { data: userData } = await supabase.from("users").select("role").eq("id", user.id).single()
-
-  return userData?.role === "admin"
+  return false
 }
 
 export async function getAdminStats(): Promise<AdminStats | null> {
-  const supabase = createClient()
-
-  const isAdmin = await checkAdminAccess()
-  if (!isAdmin) return null
-
-  const { data, error } = await supabase.rpc("get_admin_stats")
-
-  if (error) {
-    console.error("Error fetching admin stats:", error)
-    return null
+  return {
+    pending_events: 0,
+    total_users: 0,
+    total_events: 0,
+    total_rsvps: 0,
+    total_bookmarks: 0,
+    active_events: 0,
   }
-
-  return data as AdminStats
 }
 
 export async function getPendingEvents(): Promise<PendingEvent[]> {
-  const supabase = createClient()
-
-  const isAdmin = await checkAdminAccess()
-  if (!isAdmin) return []
-
-  const { data, error } = await supabase
-    .from("events")
-    .select(`
-      id,
-      title,
-      description,
-      date_time,
-      venue,
-      category,
-      tags,
-      max_participants,
-      additional_info,
-      created_at,
-      creator:users!creator_id(id, name, email)
-    `)
-    .eq("is_verified", false)
-    .eq("status", "pending_review")
-    .order("created_at", { ascending: false })
-
-  if (error) {
-    console.error("Error fetching pending events:", error)
-    return []
-  }
-
-  return data as PendingEvent[]
+  return []
 }
 
 export async function getEventById(eventId: string): Promise<PendingEvent | null> {
-  const supabase = createClient()
-
-  const isAdmin = await checkAdminAccess()
-  if (!isAdmin) return null
-
-  const { data, error } = await supabase
-    .from("events")
-    .select(`
-      id,
-      title,
-      description,
-      date_time,
-      venue,
-      category,
-      tags,
-      max_participants,
-      additional_info,
-      created_at,
-      creator:users!creator_id(id, name, email)
-    `)
-    .eq("id", eventId)
-    .single()
-
-  if (error) {
-    console.error("Error fetching event:", error)
-    return null
-  }
-
-  return data as PendingEvent
+  return null
 }
 
 export async function getRecentAdminLogs(limit = 10): Promise<AdminLog[]> {
-  const supabase = createClient()
-
-  const isAdmin = await checkAdminAccess()
-  if (!isAdmin) return []
-
-  const { data, error } = await supabase
-    .from("admin_logs")
-    .select(`
-      id,
-      admin_id,
-      action,
-      target_id,
-      target_type,
-      details,
-      ip_address,
-      user_agent,
-      created_at,
-      admin:users!admin_id(name, email)
-    `)
-    .order("created_at", { ascending: false })
-    .limit(limit)
-
-  if (error) {
-    console.error("Error fetching admin logs:", error)
-    return []
-  }
-
-  return data as AdminLog[]
+  return []
 }
 
 export async function logAdminAction(
@@ -175,34 +73,4 @@ export async function logAdminAction(
   targetId?: string,
   targetType?: string,
   details: Record<string, any> = {},
-): Promise<void> {
-  const supabase = createClient()
-
-  const isAdmin = await checkAdminAccess()
-  if (!isAdmin) return
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return
-
-  // Get IP address and user agent from headers
-  const headersList = headers()
-  const ipAddress = headersList.get("x-forwarded-for") || headersList.get("x-real-ip") || null
-  const userAgent = headersList.get("user-agent") || null
-
-  const { error } = await supabase.from("admin_logs").insert({
-    admin_id: user.id,
-    action,
-    target_id: targetId,
-    target_type: targetType,
-    details,
-    ip_address: ipAddress,
-    user_agent: userAgent,
-  })
-
-  if (error) {
-    console.error("Error logging admin action:", error)
-  }
-}
+): Promise<void> {}

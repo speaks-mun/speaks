@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { formatDistanceToNow } from "date-fns"
 import type { AdminLog } from "@/lib/supabase/admin"
 
 interface RecentActivityProps {
@@ -52,29 +51,5 @@ export function RecentActivity({ logs }: RecentActivityProps) {
     )
   }
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Activity</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {logs.map((log) => (
-            <div key={log.id} className="flex items-start space-x-3">
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center space-x-2">
-                  {getActionBadge(log.action)}
-                  <span className="text-sm text-muted-foreground">by {log.admin?.name || "Unknown Admin"}</span>
-                </div>
-                <p className="text-sm">{getActionDescription(log)}</p>
-                <p className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(log.created_at), { addSuffix: true })}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  )
+  return null
 }

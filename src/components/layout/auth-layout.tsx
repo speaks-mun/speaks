@@ -1,19 +1,19 @@
 "use client"
 
-import type React from "react"
+import type { ReactNode } from "react"
 import { useTheme } from "next-themes"
 import { Switch } from "@/components/ui/switch"
 import { Sun, Moon } from "lucide-react"
 
 interface AuthLayoutProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative">
+    <main className="min-h-screen flex items-center justify-center relative">
       {/* Theme Toggle - Fixed position */}
       <div className="absolute top-4 right-4 z-10">
         <div className="flex items-center space-x-2 bg-card-background/80 backdrop-blur-sm border border-border-divider rounded-lg px-3 py-2">
@@ -30,6 +30,6 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
       {/* Centered content */}
       <div className="w-full max-w-md">{children}</div>
-    </div>
+    </main>
   )
 }

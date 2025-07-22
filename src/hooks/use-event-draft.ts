@@ -56,10 +56,10 @@ export function useEventDraft() {
   }, [draft])
 
   return {
-    draft,
+    draft: null,
     saveDraft,
     clearDraft,
     getLastSavedTime,
-    hasDraft: !!draft,
+    hasDraft: false,
   }
 }

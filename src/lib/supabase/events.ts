@@ -1,95 +1,96 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/client"
 
 export interface Event {
   id: string
-  creator_id: string
   title: string
   description: string
-  date_time: string
-  venue: string
   category: string
+  date_time: string
+  venue_location: string
   tags: string[]
-  max_participants: number | null
-  current_participants: number
-  image_url: string | null
-  status: string
+  attendee_limit: number
+  participant_count: number
   is_verified: boolean
-  additional_info: string | null
-  created_at: string
-  updated_at: string
-  creator?: {
+  status: string
+  creator: {
+    id: string
     name: string
-    avatar_url?: string
+    email: string
   }
-  is_bookmarked?: boolean
-  user_rsvp_status?: string | null
 }
 
-export interface EventFilters {
+export interface GetEventsParams {
+  offset?: number
+  limit?: number
   category?: string
-  dateRange?: { from?: Date; to?: Date }
+  dateFrom?: Date
+  dateTo?: Date
   location?: string
-  tags?: string
-  sort?: string
+  tags?: string[]
+  sortBy?: string
 }
 
-export async function getEvents(
-  filters: EventFilters = {},
-  offset = 0,
-  limit = 20,
-): Promise<{ events: Event[]; hasMore: boolean }> {
+export async function getEvents(params: GetEventsParams = {}) {
   const supabase = createClient()
+  const { offset = 0, limit = 20, category, dateFrom, dateTo, location, tags, sortBy = "date_asc" } = params
 
   let query = supabase
     .from("events")
-    .select(
-      `
-      *,
-      creator:users!creator_id(name, avatar_url),
-      bookmarks!left(user_id),
-      rsvps!left(user_id, status)
-    `,
-    )
+    .select(`
+      id,
+      title,
+      description,
+      category,
+      date_time,
+      venue_location,
+      tags,
+      attendee_limit,
+      participant_count,
+      is_verified,
+      status,
+      creator:users!creator_id (
+        id,
+        name,
+        email
+      )
+    `)
     .eq("is_verified", true)
     .eq("status", "live")
 
   // Apply filters
-  if (filters.category && filters.category !== "All Categories") {
-    query = query.eq("category", filters.category)
+  if (category) {
+    query = query.eq("category", category)
   }
 
-  if (filters.dateRange?.from) {
-    query = query.gte("date_time", filters.dateRange.from.toISOString())
+  if (dateFrom) {
+    query = query.gte("date_time", dateFrom.toISOString())
   }
 
-  if (filters.dateRange?.to) {
-    query = query.lte("date_time", filters.dateRange.to.toISOString())
+  if (dateTo) {
+    query = query.lte("date_time", dateTo.toISOString())
   }
 
-  if (filters.location) {
-    query = query.ilike("venue", `%${filters.location}%`)
+  if (location) {
+    query = query.ilike("venue_location", `%${location}%`)
   }
 
-  if (filters.tags) {
-    const searchTerms = filters.tags.toLowerCase().split(" ")
-    searchTerms.forEach((term) => {
-      query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,tags.cs.{${term}},venue.ilike.%${term}%`)
-    })
+  if (tags && tags.length > 0) {
+    query = query.contains("tags", tags)
   }
 
   // Apply sorting
-  switch (filters.sort) {
+  switch (sortBy) {
     case "date_desc":
       query = query.order("date_time", { ascending: false })
       break
+    case "title_asc":
+      query = query.order("title", { ascending: true })
+      break
+    case "title_desc":
+      query = query.order("title", { ascending: false })
+      break
     case "participants_desc":
-      query = query.order("current_participants", { ascending: false })
-      break
-    case "participants_asc":
-      query = query.order("current_participants", { ascending: true })
-      break
-    case "created_desc":
-      query = query.order("created_at", { ascending: false })
+      query = query.order("participant_count", { ascending: false })
       break
     default:
       query = query.order("date_time", { ascending: true })
@@ -101,70 +102,44 @@ export async function getEvents(
   const { data, error } = await query
 
   if (error) {
-    console.error("Error fetching events:", error)
-    return { events: [], hasMore: false }
+    throw new Error(`Failed to fetch events: ${error.message}`)
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  // Process events to include bookmark and RSVP status
-  const events: Event[] = (data || []).map((event: any) => ({
-    ...event,
-    creator: event.creator,
-    is_bookmarked: user ? event.bookmarks.some((b: any) => b.user_id === user.id) : false,
-    user_rsvp_status: user ? event.rsvps.find((r: any) => r.user_id === user.id)?.status || null : null,
-  }))
-
   return {
-    events,
-    hasMore: data?.length === limit,
+    events: data || [],
+    hasMore: (data || []).length === limit,
   }
 }
 
-export async function getUserEvents(userId: string, type: "created" | "attending" | "bookmarked") {
+export async function getUserEvents(userId: string) {
   const supabase = createClient()
 
-  let query
-
-  switch (type) {
-    case "created":
-      query = supabase
-        .from("events")
-        .select("*, creator:users!creator_id(name, avatar_url)")
-        .eq("creator_id", userId)
-        .order("created_at", { ascending: false })
-      break
-
-    case "attending":
-      query = supabase
-        .from("rsvps")
-        .select("*, event:events(*, creator:users!creator_id(name, avatar_url))")
-        .eq("user_id", userId)
-        .eq("status", "going")
-        .order("created_at", { ascending: false })
-      break
-
-    case "bookmarked":
-      query = supabase
-        .from("bookmarks")
-        .select("*, event:events(*, creator:users!creator_id(name, avatar_url))")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-      break
-  }
-
-  const { data, error } = await query
+  const { data, error } = await supabase
+    .from("events")
+    .select(`
+      id,
+      title,
+      description,
+      category,
+      date_time,
+      venue_location,
+      tags,
+      attendee_limit,
+      participant_count,
+      is_verified,
+      status,
+      creator:users!creator_id (
+        id,
+        name,
+        email
+      )
+    `)
+    .eq("creator_id", userId)
+    .order("created_at", { ascending: false })
 
   if (error) {
-    console.error(`Error fetching ${type} events:`, error)
-    return []
+    throw new Error(`Failed to fetch user events: ${error.message}`)
   }
 
-  if (type === "created") {
-    return data || []
-  }
-
-  return (data || []).map((item: any) => item.event)
+  return data || []
 }
