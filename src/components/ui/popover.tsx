@@ -5,9 +5,7 @@ import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
 
-export function Popover({ children }: { children: React.ReactNode }) {
-  return <div>{children}</div>
-}
+export const Popover = ({ children }: { children: React.ReactNode }) => <>{children}</>
 
 export const PopoverTrigger = Popover
 

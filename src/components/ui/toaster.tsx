@@ -1,9 +1,6 @@
 "use client"
-import { toast as shadToast } from "sonner"
 
+// Stub for a global toast provider (e.g. Sonner or Radix)
 export function Toaster() {
-  /* Mount point for Sonner – already handled globally in Next.js */
   return null
 }
-
-export const toast = shadToast
