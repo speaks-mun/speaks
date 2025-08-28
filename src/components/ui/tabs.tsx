@@ -5,6 +5,18 @@ import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@/lib/utils"
 
+const Tabs = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Root
+    ref={ref}
+    className={cn("w-full", className)}
+    {...props}
+  />
+))
+Tabs.displayName = TabsPrimitive.Root.displayName
+
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
@@ -41,6 +53,7 @@ const TabsContent = React.forwardRef<
 >(({ className, ...props }, ref) => <TabsPrimitive.Content ref={ref} className={cn("mt-2", className)} {...props} />)
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
-export const Tabs = ({ children }: { children: React.ReactNode }) => <>{children}</>
+// export const Tabs = ({ children }: { children: React.ReactNode }) => <>{children}</>
 
-export { TabsList, TabsTrigger, TabsContent }
+// export { TabsList, TabsTrigger, TabsContent }
+export { Tabs, TabsList, TabsTrigger, TabsContent }

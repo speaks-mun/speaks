@@ -27,10 +27,12 @@ export function TopNavbar({ onMenuToggle }: TopNavbarProps) {
       <div className="px-4 md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/discover" className="flex items-center space-x-2 group">
-            <div className="w-8 h-8 bg-primary-cta rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
-              <span className="text-white font-bold text-lg">S</span>
-            </div>
+          <Link href="/" className="flex items-center space-x-2 group">
+            <img
+              src="/speaks-logo.jpg" // make sure your file is in /public
+              alt="Speaks Logo"
+              className="h-8 w-auto transition-transform group-hover:scale-105"
+            />
             <span className="text-xl font-bold text-heading-text">Speaks</span>
           </Link>
 

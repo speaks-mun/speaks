@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Image from "next/image"
+
 
 export default function Page() {
   return (
@@ -9,10 +11,22 @@ export default function Page() {
       <header className="border-b border-border-divider bg-card-background/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary-cta rounded-lg flex items-center justify-center">
+            <div className="flex items-center space-x-2">
+              <Link href="/" className="flex items-center">
+                <Image
+                  src="/speaks-logo.jpg"
+                  alt="Speaks Logo"
+                  width={40}  // adjust size as needed
+                  height={40}
+                />
+                <span className="ml-2 text-xl font-bold text-heading-text">Speaks</span>
+              </Link>
+            </div>
+
+            {/* <div className="w-8 h-8 bg-primary-cta rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">S</span>
             </div>
-            <span className="text-xl font-bold text-heading-text">Speaks</span>
+            <span className="text-xl font-bold text-heading-text">Speaks</span> */}
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
