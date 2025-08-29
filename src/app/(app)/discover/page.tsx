@@ -130,7 +130,10 @@
 // 	);
 // }
 
+"use client";
+
 import React from "react";
+import Link from "next/link";
 import speaksLogo from "./speaks-logo.png"; // <- make sure this is in src folder
 
 // Use your uploaded images for Harvard, Yale, Columbia
@@ -172,9 +175,11 @@ function Card({ data }) {
 				<p className="text-sm text-gray-400">{data.date}</p>
 				<div className="flex justify-between items-center mt-2">
 					<span className="text-sm font-bold">{data.price}</span>
-					<button className="text-xs bg-gray-700 px-2 py-1 rounded">
-						View Details
-					</button>
+					<Link href={`/mun/${encodeURIComponent(data.title)}`}>
+						<button className="text-xs bg-gray-700 px-2 py-1 rounded">
+							View Details
+						</button>
+					</Link>
 				</div>
 			</div>
 		</div>
