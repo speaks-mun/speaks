@@ -7,13 +7,8 @@ export default function HarvardPage() {
 	return (
 		<div className="bg-[#111] text-white min-h-screen">
 			{/* Header */}
-			<header className="flex items-center bg-black p-4">
-				<Image
-					src="/speaks-logo.jpg" // place this image inside public/
-					alt="Speaks Logo"
-					width={120}
-					height={40}
-				/>
+			<header className="flex items-center bg-black px-6 py-3">
+				<img src="/speaks-logo.jpg" className="h-10" />
 			</header>
 
 			{/* Hero Banner */}
